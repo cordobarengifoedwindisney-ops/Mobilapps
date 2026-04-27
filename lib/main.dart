@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// DATA_MODEL CLASSES
+// ============================================================
+// DATA MODELS
+// ============================================================
+
 class Product {
   final String id;
   final String name;
@@ -10,7 +13,8 @@ class Product {
   final double rating;
   final String description;
   final String category;
-  final List<Map<String, String>> specifications; // Added specifications field
+  final List<Map<String, String>> specifications;
+
   const Product({
     required this.id,
     required this.name,
@@ -19,7 +23,7 @@ class Product {
     required this.rating,
     this.description = 'Un producto tecnológico de alta calidad y rendimiento.',
     required this.category,
-    required this.specifications, // Made required
+    required this.specifications,
   });
 }
 
@@ -27,6 +31,7 @@ class Review {
   final String author;
   final String comment;
   final double rating;
+
   const Review({
     required this.author,
     required this.comment,
@@ -39,12 +44,14 @@ class CartItem {
   final String name;
   final double price;
   int quantity;
+
   CartItem({
     required this.productId,
     required this.name,
     required this.price,
     this.quantity = 1,
   });
+
   CartItem copyWith({int? quantity}) {
     return CartItem(
       productId: productId,
@@ -58,29 +65,31 @@ class CartItem {
 class Offer {
   final Product product;
   final double discountPercentage;
+
   const Offer({required this.product, required this.discountPercentage});
+
   double get discountedPrice => product.price * (1 - discountPercentage);
   String get discountText => '${(discountPercentage * 100).toInt()}% Off';
 }
 
+// ============================================================
+// STATE MANAGEMENT
+// ============================================================
+
 class CartModel extends ChangeNotifier {
-  final Map<String, CartItem> _items = <String, CartItem>{};
+  final Map<String, CartItem> _items = {};
 
   List<CartItem> get items => _items.values.toList();
 
   int get totalItems {
     int count = 0;
-    _items.forEach((String key, CartItem value) {
-      count += value.quantity;
-    });
+    _items.forEach((key, value) => count += value.quantity);
     return count;
   }
 
   double get totalPrice {
     double total = 0.0;
-    _items.forEach((String key, CartItem value) {
-      total += value.price * value.quantity;
-    });
+    _items.forEach((key, value) => total += value.price * value.quantity);
     return total;
   }
 
@@ -116,10 +125,8 @@ class CartModel extends ChangeNotifier {
   }
 
   void removeItem(String productId) {
-    if (_items.containsKey(productId)) {
-      _items.remove(productId);
-      notifyListeners();
-    }
+    _items.remove(productId);
+    notifyListeners();
   }
 
   void clearCart() {
@@ -128,8 +135,11 @@ class CartModel extends ChangeNotifier {
   }
 }
 
+// ============================================================
 // INITIAL DATA
-final List<Product> _allProducts = <Product>[
+// ============================================================
+
+final List<Product> _allProducts = [
   const Product(
     id: "p1",
     name: "Laptop Gamer",
@@ -137,11 +147,9 @@ final List<Product> _allProducts = <Product>[
     imageUrl: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8",
     rating: 4.5,
     description:
-        '''Potente laptop para los gamers más exigentes. Rápida y eficiente para todo tipo de tareas. equipada con 
-procesador de última generación y tarjeta gráfica de alto rendimiento para una experiencia de juego 
-inigualable.''',
+        'Potente laptop para los gamers más exigentes. Rápida y eficiente para todo tipo de tareas. Equipada con procesador de última generación y tarjeta gráfica de alto rendimiento.',
     category: "Laptops",
-    specifications: <Map<String, String>>[
+    specifications: [
       {'key': 'Procesador', 'value': 'Intel Core i9'},
       {'key': 'RAM', 'value': '32GB DDR4'},
       {'key': 'Almacenamiento', 'value': '1TB SSD NVMe'},
@@ -157,10 +165,9 @@ inigualable.''',
     imageUrl: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9",
     rating: 4.0,
     description:
-        '''El último smartphone con cámara de alta resolución, gran batería y rendimiento superior. Captura fotos 
-impresionantes, disfruta de tus apps favoritas sin interrupciones y mantente conectado todo el día.''',
+        'El último smartphone con cámara de alta resolución, gran batería y rendimiento superior. Captura fotos impresionantes y mantente conectado todo el día.',
     category: "Smartphones",
-    specifications: <Map<String, String>>[
+    specifications: [
       {'key': 'Pantalla', 'value': '6.7" OLED'},
       {'key': 'Procesador', 'value': 'Snapdragon 8 Gen 3'},
       {'key': 'RAM', 'value': '12GB'},
@@ -176,10 +183,9 @@ impresionantes, disfruta de tus apps favoritas sin interrupciones y mantente con
     imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
     rating: 4.5,
     description:
-        '''Sonido envolvente, cancelación de ruido y comodidad para disfrutar tu música sin interrupciones. 
-Conexión Bluetooth estable y batería de larga duración para horas de entretenimiento.''',
+        'Sonido envolvente, cancelación de ruido y comodidad para disfrutar tu música sin interrupciones. Batería de larga duración para horas de entretenimiento.',
     category: "Audífonos",
-    specifications: <Map<String, String>>[
+    specifications: [
       {'key': 'Tipo', 'value': 'Over-ear inalámbricos'},
       {'key': 'Conectividad', 'value': 'Bluetooth 5.2'},
       {'key': 'Cancelación de Ruido', 'value': 'Activa (ANC)'},
@@ -196,10 +202,9 @@ Conexión Bluetooth estable y batería de larga duración para horas de entreten
         "https://tse1.mm.bing.net/th/id/OIP.hSeds2vDO0LKW9bmekgiQQHaFA?rs=1&pid=ImgDetMain&o=7&rm=3",
     rating: 3.5,
     description:
-        '''Monitor de gran tamaño con resolución 4K para una experiencia visual inmersiva y detallada. Ideal para 
-trabajo, diseño gráfico y entretenimiento, con colores vibrantes y ángulos de visión amplios.''',
+        'Monitor de gran tamaño con resolución 4K para una experiencia visual inmersiva. Ideal para trabajo, diseño gráfico y entretenimiento.',
     category: "Monitores",
-    specifications: <Map<String, String>>[
+    specifications: [
       {'key': 'Tamaño', 'value': '34 pulgadas'},
       {'key': 'Resolución', 'value': '3440 x 1440 (UltraWide QHD)'},
       {'key': 'Frecuencia de Actualización', 'value': '100Hz'},
@@ -216,10 +221,9 @@ trabajo, diseño gráfico y entretenimiento, con colores vibrantes y ángulos de
         "https://http2.mlstatic.com/D_NQ_NP_928830-CBT77640147622_072024-O.webp",
     rating: 4.8,
     description:
-        '''Teclado mecánico de alta respuesta, ideal para gamers y programadores, con retroiluminación RGB 
-personalizable. Disfruta de una escritura precisa y un rendimiento superior en cada pulsación.''',
+        'Teclado mecánico de alta respuesta, ideal para gamers y programadores, con retroiluminación RGB personalizable.',
     category: "Accesorios",
-    specifications: <Map<String, String>>[
+    specifications: [
       {'key': 'Tipo de Switch', 'value': 'Redragon Red Switches'},
       {'key': 'Retroiluminación', 'value': 'RGB personalizable'},
       {'key': 'Conectividad', 'value': 'USB Alámbrico'},
@@ -236,10 +240,9 @@ personalizable. Disfruta de una escritura precisa y un rendimiento superior en c
         "https://cdn.mos.cms.futurecdn.net/fgvEZRacdHbG4GAzA25AQj-1920-80.jpg",
     rating: 4.2,
     description:
-        '''Controla tu actividad física, monitorea tu salud y recibe notificaciones en tu muñeca. Un compañero 
-inteligente para tu vida diaria, con múltiples modos deportivos y seguimiento de frecuencia cardíaca.''',
+        'Controla tu actividad física, monitorea tu salud y recibe notificaciones en tu muñeca. Múltiples modos deportivos y seguimiento de frecuencia cardíaca.',
     category: "Wearables",
-    specifications: <Map<String, String>>[
+    specifications: [
       {'key': 'Pantalla', 'value': '1.4" AMOLED'},
       {'key': 'Sensores', 'value': 'Frecuencia Cardíaca, SpO2, GPS'},
       {'key': 'Resistencia al Agua', 'value': '5 ATM'},
@@ -250,14 +253,11 @@ inteligente para tu vida diaria, con múltiples modos deportivos y seguimiento d
   ),
 ];
 
-class Laptop {}
-
-final List<Review> _allReviews = <Review>[
+final List<Review> _allReviews = [
   const Review(
     author: "Carlos M.",
     comment:
-        '''Excelente servicio y productos de gran calidad. Mi laptop llegó muy rápido y en perfectas 
-condiciones.''',
+        'Excelente servicio y productos de gran calidad. Mi laptop llegó muy rápido y en perfectas condiciones.',
     rating: 5.0,
   ),
   const Review(
@@ -275,49 +275,50 @@ condiciones.''',
   const Review(
     author: "Sofía G.",
     comment:
-        '''La atención al cliente es fantástica, me ayudaron a elegir el smartphone ideal. Totalmente 
-recomendados.''',
+        'La atención al cliente es fantástica, me ayudaron a elegir el smartphone ideal. Totalmente recomendados.',
     rating: 5.0,
   ),
   const Review(
     author: "Diego F.",
     comment:
-        '''El teclado mecánico es una maravilla, muy cómodo y la retroiluminación es genial. ¡Excelente 
-compra!''',
+        'El teclado mecánico es una maravilla, muy cómodo y la retroiluminación es genial. ¡Excelente compra!',
     rating: 4.8,
   ),
   const Review(
     author: "Elena V.",
-    comment:
-        "Mi smartwatch es perfecto para mis entrenamientos. Duración de batería increíble.",
+    comment: "Mi smartwatch es perfecto para mis entrenamientos. Duración de batería increíble.",
     rating: 4.7,
   ),
 ];
-final List<Offer> _allOffers = <Offer>[
-  Offer(product: _allProducts[0], discountPercentage: 0.20), // Laptop Gamer
-  Offer(product: _allProducts[1], discountPercentage: 0.15), // Smartphone Pro
-  Offer(
-    product: _allProducts[2],
-    discountPercentage: 0.25,
-  ), // Audífonos Bluetooth
-  Offer(
-    product: _allProducts[3],
-    discountPercentage: 0.10,
-  ), // Monitor UltraWide
-  Offer(product: _allProducts[4], discountPercentage: 0.12), // Teclado Mecánico
+
+final List<Offer> _allOffers = [
+  Offer(product: _allProducts[0], discountPercentage: 0.20),
+  Offer(product: _allProducts[1], discountPercentage: 0.15),
+  Offer(product: _allProducts[2], discountPercentage: 0.25),
+  Offer(product: _allProducts[3], discountPercentage: 0.10),
+  Offer(product: _allProducts[4], discountPercentage: 0.12),
 ];
-// MAIN APP WIDGET
+
+// ============================================================
+// MAIN
+// ============================================================
+
 void main() {
   runApp(const ProvTecnoApp());
 }
 
+// ============================================================
+// ROOT APP
+// ============================================================
+
 class ProvTecnoApp extends StatelessWidget {
   const ProvTecnoApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<CartModel>(
-      create: (BuildContext context) => CartModel(),
-      builder: (BuildContext context, Widget? child) {
+      create: (_) => CartModel(),
+      builder: (context, child) {
         return MaterialApp(
           title: 'ProvTecno',
           debugShowCheckedModeBanner: false,
@@ -343,10 +344,7 @@ class ProvTecnoApp extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 textStyle: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -364,24 +362,26 @@ class ProvTecnoApp extends StatelessWidget {
   }
 }
 
-// HELPER WIDGETS
+// ============================================================
+// SHARED / HELPER WIDGETS
+// ============================================================
+
 class _ShoppingCartIcon extends StatelessWidget {
   const _ShoppingCartIcon();
+
   @override
   Widget build(BuildContext context) {
     return Consumer<CartModel>(
-      builder: (BuildContext context, CartModel cart, Widget? child) {
+      builder: (context, cart, child) {
         final int itemCount = cart.totalItems;
         return Stack(
-          children: <Widget>[
+          children: [
             IconButton(
               icon: const Icon(Icons.shopping_cart),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute<Carrito>(
-                    builder: (BuildContext context) => const Carrito(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const Carrito()),
                 );
               },
             ),
@@ -395,10 +395,7 @@ class _ShoppingCartIcon extends StatelessWidget {
                     color: Colors.red,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  constraints: const BoxConstraints(
-                    minWidth: 16,
-                    minHeight: 16,
-                  ),
+                  constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
                   child: Text(
                     '$itemCount',
                     style: const TextStyle(color: Colors.white, fontSize: 10),
@@ -417,17 +414,19 @@ class RatingStars extends StatelessWidget {
   final double rating;
   final double starSize;
   final Color starColor;
+
   const RatingStars({
     super.key,
     required this.rating,
     this.starSize = 18,
     this.starColor = Colors.amber,
   });
+
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisSize: MainAxisSize.min, // Use min to prevent horizontal overflow
-      children: List<Widget>.generate(5, (int index) {
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(5, (index) {
         if (index < rating.floor()) {
           return Icon(Icons.star, color: starColor, size: starSize);
         } else if (index < rating && rating - index >= 0.5) {
@@ -440,6 +439,10 @@ class RatingStars extends StatelessWidget {
   }
 }
 
+// ============================================================
+// REUSABLE CARD WIDGETS
+// ============================================================
+
 class ProductCard extends StatelessWidget {
   final Product product;
 
@@ -451,9 +454,8 @@ class ProductCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute<ProductDetailsPage>(
-            builder: (BuildContext context) =>
-                ProductDetailsPage(product: product),
+          MaterialPageRoute(
+            builder: (_) => ProductDetailsPage(product: product),
           ),
         );
       },
@@ -461,30 +463,18 @@ class ProductCard extends StatelessWidget {
         elevation: 6,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
+          children: [
             Expanded(
               child: Hero(
-                tag:
-                    'productImage_${product.id}', // Unique tag for Hero animation
+                tag: 'productImage_${product.id}',
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(12),
-                  ),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                   child: Image.network(
                     product.imageUrl,
                     fit: BoxFit.cover,
-                    errorBuilder:
-                        (
-                          BuildContext context,
-                          Object error,
-                          StackTrace? stackTrace,
-                        ) => const Center(
-                          child: Icon(
-                            Icons.image_not_supported,
-                            size: 40,
-                            color: Colors.grey,
-                          ),
-                        ),
+                    errorBuilder: (_, __, ___) => const Center(
+                      child: Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
+                    ),
                   ),
                 ),
               ),
@@ -493,13 +483,10 @@ class ProductCard extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
+                children: [
                   Text(
                     product.name,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -529,15 +516,10 @@ class ProductCard extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        Provider.of<CartModel>(
-                          context,
-                          listen: false,
-                        ).addProduct(product);
+                        Provider.of<CartModel>(context, listen: false).addProduct(product);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(
-                              '${product.name} añadido al carrito!',
-                            ),
+                            content: Text('${product.name} añadido al carrito!'),
                             duration: const Duration(seconds: 1),
                           ),
                         );
@@ -570,36 +552,29 @@ class OfferCard extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute<ProductDetailsPage>(
-              builder: (BuildContext context) =>
-                  ProductDetailsPage(product: offer.product),
+            MaterialPageRoute(
+              builder: (_) => ProductDetailsPage(product: offer.product),
             ),
           );
         },
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
-            children: <Widget>[
+            children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Hero(
-                  tag:
-                      'productImage_${offer.product.id}_offer', // Unique tag for Hero animation
+                  tag: 'productImage_${offer.product.id}_offer',
                   child: Image.network(
                     offer.product.imageUrl,
                     width: 70,
                     height: 70,
                     fit: BoxFit.cover,
-                    errorBuilder:
-                        (
-                          BuildContext context,
-                          Object error,
-                          StackTrace? stackTrace,
-                        ) => const Icon(
-                          Icons.image_not_supported,
-                          size: 40,
-                          color: Colors.grey,
-                        ),
+                    errorBuilder: (_, __, ___) => const Icon(
+                      Icons.image_not_supported,
+                      size: 40,
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
               ),
@@ -607,17 +582,14 @@ class OfferCard extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
+                  children: [
                     Text(
                       offer.product.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                     const SizedBox(height: 4),
                     Row(
-                      children: <Widget>[
+                      children: [
                         Text(
                           '\$${offer.product.price.toStringAsFixed(2)}',
                           style: const TextStyle(
@@ -641,10 +613,7 @@ class OfferCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: Colors.green,
                   borderRadius: BorderRadius.circular(8),
@@ -680,9 +649,9 @@ class ReviewCard extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             Row(
-              children: <Widget>[
+              children: [
                 const CircleAvatar(
                   backgroundColor: Colors.blueGrey,
                   child: Icon(Icons.person, color: Colors.white),
@@ -691,10 +660,7 @@ class ReviewCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     review.author,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ),
                 RatingStars(rating: review.rating, starSize: 16),
@@ -712,16 +678,15 @@ class ReviewCard extends StatelessWidget {
   }
 }
 
+// ============================================================
 // PAGES
+// ============================================================
 
 class Inicio extends StatelessWidget {
   const Inicio({super.key});
 
   void _abrirPagina(BuildContext context, Widget pagina) {
-    Navigator.push(
-      context,
-      MaterialPageRoute<Widget>(builder: (BuildContext context) => pagina),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (_) => pagina));
   }
 
   @override
@@ -729,18 +694,18 @@ class Inicio extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("ProvTecno"),
-        actions: const <Widget>[_ShoppingCartIcon()],
+        actions: const [_ShoppingCartIcon()],
       ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
-          children: <Widget>[
+          children: [
             const DrawerHeader(
               decoration: BoxDecoration(color: Colors.blueGrey),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
+                children: [
                   Icon(Icons.memory, color: Colors.white, size: 50),
                   SizedBox(height: 10),
                   Text(
@@ -784,10 +749,10 @@ class Inicio extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             // Hero Section
             Stack(
-              children: <Widget>[
+              children: [
                 Container(
                   height: 250,
                   width: double.infinity,
@@ -797,7 +762,6 @@ class Inicio extends StatelessWidget {
                         'https://tse3.mm.bing.net/th/id/OIP.jHmnitetrL9Sxjqhju0g3AHaD_?rs=1&pid=ImgDetMain&o=7&rm=3',
                       ),
                       fit: BoxFit.cover,
-                      // Fix: Replaced .withOpacity() with .withAlpha() as recommended for deprecation
                       colorFilter: ColorFilter.mode(
                         Colors.black.withAlpha(102),
                         BlendMode.darken,
@@ -805,12 +769,11 @@ class Inicio extends StatelessWidget {
                     ),
                   ),
                   child: Container(
-                    // Gradient overlay for better text readability
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: <Color>[Colors.transparent, Colors.black54],
+                        colors: [Colors.transparent, Colors.black54],
                       ),
                     ),
                   ),
@@ -820,35 +783,25 @@ class Inicio extends StatelessWidget {
                   left: 20,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
+                    children: [
                       Text(
                         "ProvTecno",
-                        style: Theme.of(context).textTheme.headlineLarge
-                            ?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              shadows: <Shadow>[
-                                const Shadow(
-                                  blurRadius: 10,
-                                  color: Colors.black,
-                                  offset: Offset(2, 2),
-                                ),
-                              ],
-                            ),
+                        style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          shadows: const [
+                            Shadow(blurRadius: 10, color: Colors.black, offset: Offset(2, 2)),
+                          ],
+                        ),
                       ),
                       Text(
                         "VENTA DE PRODUCTOS TECNOLÓGICOS",
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              color: Colors.white70,
-                              shadows: <Shadow>[
-                                const Shadow(
-                                  blurRadius: 5,
-                                  color: Colors.black,
-                                  offset: Offset(1, 1),
-                                ),
-                              ],
-                            ),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Colors.white70,
+                          shadows: const [
+                            Shadow(blurRadius: 5, color: Colors.black, offset: Offset(1, 1)),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -857,7 +810,7 @@ class Inicio extends StatelessWidget {
             ),
             const SizedBox(height: 25),
 
-            // Featured Categories Section
+            // Categories Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
@@ -873,59 +826,42 @@ class Inicio extends StatelessWidget {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 15),
-                children: <Widget>[
+                children: [
                   _CategoryChip(
                     icon: Icons.laptop_mac,
                     label: "Laptops",
-                    onTap: () => _abrirPagina(
-                      context,
-                      const Productos(category: "Laptops"),
-                    ),
+                    onTap: () => _abrirPagina(context, const Productos(category: "Laptops")),
                   ),
                   _CategoryChip(
                     icon: Icons.smartphone,
                     label: "Smartphones",
-                    onTap: () => _abrirPagina(
-                      context,
-                      const Productos(category: "Smartphones"),
-                    ),
+                    onTap: () => _abrirPagina(context, const Productos(category: "Smartphones")),
                   ),
                   _CategoryChip(
                     icon: Icons.headphones,
                     label: "Audífonos",
-                    onTap: () => _abrirPagina(
-                      context,
-                      const Productos(category: "Audífonos"),
-                    ),
+                    onTap: () => _abrirPagina(context, const Productos(category: "Audífonos")),
                   ),
                   _CategoryChip(
                     icon: Icons.monitor,
                     label: "Monitores",
-                    onTap: () => _abrirPagina(
-                      context,
-                      const Productos(category: "Monitores"),
-                    ),
+                    onTap: () => _abrirPagina(context, const Productos(category: "Monitores")),
                   ),
                   _CategoryChip(
                     icon: Icons.watch,
                     label: "Wearables",
-                    onTap: () => _abrirPagina(
-                      context,
-                      const Productos(category: "Wearables"),
-                    ),
+                    onTap: () => _abrirPagina(context, const Productos(category: "Wearables")),
                   ),
                   _CategoryChip(
                     icon: Icons.keyboard,
                     label: "Accesorios",
-                    onTap: () => _abrirPagina(
-                      context,
-                      const Productos(category: "Accesorios"),
-                    ),
+                    onTap: () => _abrirPagina(context, const Productos(category: "Accesorios")),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 25),
+
             // Featured Products Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -938,12 +874,12 @@ class Inicio extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             SizedBox(
-              height: 380, // Height for horizontal product cards
+              height: 380,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 15),
-                itemCount: 4, // Show a few featured products
-                itemBuilder: (BuildContext context, int index) {
+                itemCount: 4,
+                itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(right: 15),
                     child: SizedBox(
@@ -955,7 +891,8 @@ class Inicio extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 25),
-            // About Us Section
+
+            // About Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
@@ -972,7 +909,7 @@ class Inicio extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
+                  children: [
                     Text(
                       "Nuestra Misión",
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -981,9 +918,7 @@ class Inicio extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     const Text(
-                      '''En ProvTecno, nuestra misión es cuidar cuidadosamente cada producto para asegurar calidad, 
-innovación y valor. Nos esforzamos por ofrecer una experiencia de compra excepcional, con asesoramiento 
-experto y un soporte postventa inigualable. Tu satisfacción es nuestra prioridad.''',
+                      'En ProvTecno, nuestra misión es cuidar cuidadosamente cada producto para asegurar calidad, innovación y valor. Nos esforzamos por ofrecer una experiencia de compra excepcional, con asesoramiento experto y un soporte postventa inigualable. Tu satisfacción es nuestra prioridad.',
                       style: TextStyle(fontSize: 16),
                       textAlign: TextAlign.justify,
                     ),
@@ -991,10 +926,9 @@ experto y un soporte postventa inigualable. Tu satisfacción es nuestra priorida
                 ),
               ),
             ),
-
             const SizedBox(height: 25),
 
-            // Customer Reviews
+            // Reviews Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
@@ -1007,11 +941,7 @@ experto y un soporte postventa inigualable. Tu satisfacción es nuestra priorida
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Column(
-                children: _allReviews
-                    .map<ReviewCard>(
-                      (Review review) => ReviewCard(review: review),
-                    )
-                    .toList(),
+                children: _allReviews.map((r) => ReviewCard(review: r)).toList(),
               ),
             ),
             const SizedBox(height: 20),
@@ -1043,7 +973,7 @@ class _CategoryChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: Theme.of(context).cardTheme.color,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: <BoxShadow>[
+          boxShadow: [
             BoxShadow(
               color: Colors.grey.withAlpha(50),
               spreadRadius: 2,
@@ -1054,7 +984,7 @@ class _CategoryChip extends StatelessWidget {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
             Icon(icon, size: 40, color: Theme.of(context).primaryColor),
             const SizedBox(height: 8),
             Text(
@@ -1073,20 +1003,19 @@ class _CategoryChip extends StatelessWidget {
 
 class Productos extends StatelessWidget {
   final String? category;
+
   const Productos({super.key, this.category});
+
   @override
   Widget build(BuildContext context) {
     final List<Product> displayedProducts = category == null
         ? _allProducts
-        : _allProducts
-              .where((Product product) => product.category == category)
-              .toList();
+        : _allProducts.where((p) => p.category == category).toList();
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          category == null ? "Todos los Productos" : "Productos de $category",
-        ),
-        actions: const <Widget>[_ShoppingCartIcon()],
+        title: Text(category == null ? "Todos los Productos" : "Productos de $category"),
+        actions: const [_ShoppingCartIcon()],
       ),
       body: Padding(
         padding: const EdgeInsets.all(15),
@@ -1094,7 +1023,7 @@ class Productos extends StatelessWidget {
             ? const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
+                  children: [
                     Icon(Icons.category, size: 80, color: Colors.grey),
                     SizedBox(height: 20),
                     Text(
@@ -1113,7 +1042,7 @@ class Productos extends StatelessWidget {
                   childAspectRatio: 0.65,
                 ),
                 itemCount: displayedProducts.length,
-                itemBuilder: (BuildContext context, int index) {
+                itemBuilder: (context, index) {
                   return ProductCard(product: displayedProducts[index]);
                 },
               ),
@@ -1124,18 +1053,20 @@ class Productos extends StatelessWidget {
 
 class ProductDetailsPage extends StatelessWidget {
   final Product product;
+
   const ProductDetailsPage({super.key, required this.product});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(product.name),
-        actions: const <Widget>[_ShoppingCartIcon()],
+        actions: const [_ShoppingCartIcon()],
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             Hero(
               tag: 'productImage_${product.id}',
               child: Image.network(
@@ -1143,28 +1074,19 @@ class ProductDetailsPage extends StatelessWidget {
                 height: 300,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder:
-                    (
-                      BuildContext context,
-                      Object error,
-                      StackTrace? stackTrace,
-                    ) => const SizedBox(
-                      height: 300,
-                      child: Center(
-                        child: Icon(
-                          Icons.image_not_supported,
-                          size: 100,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
+                errorBuilder: (_, __, ___) => const SizedBox(
+                  height: 300,
+                  child: Center(
+                    child: Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
+                  ),
+                ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
+                children: [
                   Text(
                     product.name,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -1173,15 +1095,12 @@ class ProductDetailsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Row(
-                    children: <Widget>[
+                    children: [
                       RatingStars(rating: product.rating, starSize: 24),
                       const SizedBox(width: 8),
                       Text(
                         '(${product.rating.toStringAsFixed(1)})',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
-                        ),
+                        style: const TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -1207,8 +1126,7 @@ class ProductDetailsPage extends StatelessWidget {
                     textAlign: TextAlign.justify,
                   ),
                   const SizedBox(height: 24),
-                  // Product Specifications Section
-                  if (product.specifications.isNotEmpty) ...<Widget>[
+                  if (product.specifications.isNotEmpty) ...[
                     Text(
                       "Especificaciones Técnicas",
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -1217,16 +1135,14 @@ class ProductDetailsPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Column(
-                      children: product.specifications.map<Widget>((
-                        Map<String, String> spec,
-                      ) {
+                      children: product.specifications.map((spec) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4.0),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
+                            children: [
                               SizedBox(
-                                width: 120, // Fixed width for key
+                                width: 120,
                                 child: Text(
                                   spec['key']!,
                                   style: const TextStyle(
@@ -1253,15 +1169,10 @@ class ProductDetailsPage extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        Provider.of<CartModel>(
-                          context,
-                          listen: false,
-                        ).addProduct(product);
+                        Provider.of<CartModel>(context, listen: false).addProduct(product);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(
-                              '${product.name} añadido al carrito!',
-                            ),
+                            content: Text('${product.name} añadido al carrito!'),
                             duration: const Duration(seconds: 1),
                           ),
                         );
@@ -1282,11 +1193,7 @@ class ProductDetailsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Column(
-                    children: _allReviews
-                        .map<ReviewCard>(
-                          (Review review) => ReviewCard(review: review),
-                        )
-                        .toList(),
+                    children: _allReviews.map((r) => ReviewCard(review: r)).toList(),
                   ),
                 ],
               ),
@@ -1300,22 +1207,19 @@ class ProductDetailsPage extends StatelessWidget {
 
 class Carrito extends StatelessWidget {
   const Carrito({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Tu Carrito de Compras")),
       body: Consumer<CartModel>(
-        builder: (BuildContext context, CartModel cart, Widget? child) {
+        builder: (context, cart, child) {
           if (cart.items.isEmpty) {
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    Icons.remove_shopping_cart,
-                    size: 80,
-                    color: Colors.grey,
-                  ),
+                children: [
+                  Icon(Icons.remove_shopping_cart, size: 80, color: Colors.grey),
                   SizedBox(height: 20),
                   Text(
                     "Tu carrito está vacío",
@@ -1334,25 +1238,20 @@ class Carrito extends StatelessWidget {
               ),
             );
           }
+
           return Column(
-            children: <Widget>[
+            children: [
               Expanded(
                 child: ListView.builder(
                   itemCount: cart.items.length,
-                  itemBuilder: (BuildContext context, int index) {
+                  itemBuilder: (context, index) {
                     final CartItem cartItem = cart.items[index];
                     return Card(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 8,
-                      ),
+                      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ListTile(
-                          leading: const Icon(
-                            Icons.shopping_bag,
-                            color: Colors.blueGrey,
-                          ),
+                          leading: const Icon(Icons.shopping_bag, color: Colors.blueGrey),
                           title: Text(
                             cartItem.name,
                             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -1362,32 +1261,23 @@ class Carrito extends StatelessWidget {
                           ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
+                            children: [
                               IconButton(
                                 icon: const Icon(Icons.remove),
-                                onPressed: () {
-                                  cart.decrementQuantity(cartItem.productId);
-                                },
+                                onPressed: () => cart.decrementQuantity(cartItem.productId),
                               ),
                               Text('${cartItem.quantity}'),
                               IconButton(
                                 icon: const Icon(Icons.add),
-                                onPressed: () {
-                                  cart.incrementQuantity(cartItem.productId);
-                                },
+                                onPressed: () => cart.incrementQuantity(cartItem.productId),
                               ),
                               IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
+                                icon: const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () {
                                   cart.removeItem(cartItem.productId);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(
-                                        '${cartItem.name} eliminado.',
-                                      ),
+                                      content: Text('${cartItem.name} eliminado.'),
                                       duration: const Duration(seconds: 1),
                                     ),
                                   );
@@ -1406,16 +1296,13 @@ class Carrito extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
-                    children: <Widget>[
+                    children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
+                        children: [
                           const Text(
                             "Total:",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                           Text(
                             '\$${cart.totalPrice.toStringAsFixed(2)}',
@@ -1432,19 +1319,14 @@ class Carrito extends StatelessWidget {
                         width: double.infinity,
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            // Implement checkout logic here
                             cart.clearCart();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text(
-                                  '¡Gracias por tu compra! Carrito vaciado.',
-                                ),
+                                content: Text('¡Gracias por tu compra! Carrito vaciado.'),
                                 duration: Duration(seconds: 2),
                               ),
                             );
-                            Navigator.pop(
-                              context,
-                            ); // Go back to previous screen
+                            Navigator.pop(context);
                           },
                           icon: const Icon(Icons.payment),
                           label: const Text("Finalizar Compra"),
@@ -1470,11 +1352,11 @@ class Ofertas extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Ofertas Especiales")),
       body: ListView(
-        children: <Widget>[
+        children: [
           const SizedBox(height: 20),
           Center(
             child: Text(
-              "   Oportunidades Imperdibles   ",
+              "Oportunidades Imperdibles",
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.redAccent,
@@ -1483,9 +1365,7 @@ class Ofertas extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 15),
-          ..._allOffers
-              .map<OfferCard>((Offer offer) => OfferCard(offer: offer))
-              .toList(),
+          ..._allOffers.map((offer) => OfferCard(offer: offer)),
           const SizedBox(height: 20),
         ],
       ),
@@ -1497,7 +1377,7 @@ class Contacto extends StatelessWidget {
   const Contacto({super.key});
 
   @override
-  Widget build(BuildContext boatContext) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Contacto")),
       body: Center(
@@ -1507,13 +1387,14 @@ class Contacto extends StatelessWidget {
             padding: const EdgeInsets.all(25.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
+              children: [
                 const Icon(Icons.headset_mic, size: 80, color: Colors.blueGrey),
                 const SizedBox(height: 20),
                 Text(
                   "ProvTecno",
-                  style: Theme.of(boatContext).textTheme.headlineMedium
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 15),
@@ -1535,7 +1416,7 @@ class Contacto extends StatelessWidget {
                 const SizedBox(height: 20),
                 Text(
                   "Estamos aquí para ayudarte. ¡Contáctanos!",
-                  style: Theme.of(boatContext).textTheme.titleMedium,
+                  style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.center,
                 ),
               ],
